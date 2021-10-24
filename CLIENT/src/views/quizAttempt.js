@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router";
-import Cookies from "universal-cookie";
+import verifyToken from "../Utils/verificationUtils";
 import AttemptQuestion from "../components/attemptQuestion";
 import ReviewQuestion from "../components/reviewQuestion";
 import { Box, Typography, Grid, Button, Divider } from '@mui/material';
@@ -167,31 +167,6 @@ const Quiz = (props) => {
     }
 
     useEffect(() => {
-        const verifyToken = async () => {
-            const cookie = new Cookies();
-            const token = cookie.get("jwt");
-            if (token) {
-                const postBody = { token }
-                const res = await fetch(`${process.env.REACT_APP_API_URL}auth/verifyJWT`, {
-                    method: "POST",
-                    mode: "cors",
-                    headers: {
-                        'Content-Type': "application/json"
-                    },
-                    body: JSON.stringify(postBody)
-                });
-                const data = await res.json();
-                if (data.status) {
-                    setAuthorized(true);
-                    parseUser(data.Token);
-                } else {
-                    setAuthorized(false);
-                }
-            } else {
-                setAuthorized(false);
-            }
-        }
-
         const fetchQuiz = async () => {
             try {
                 const res = await fetch(`${process.env.REACT_APP_API_URL}quiz/attempt/${quiz_id}`, {
@@ -220,7 +195,15 @@ const Quiz = (props) => {
             }
         }
 
-        verifyToken();
+        verifyToken().then(({status, Token}) => {
+            if(status){
+                setAuthorized(true);
+            } else {
+                setAuthorized(false);
+            }
+        }).catch((e) => {
+            console.log(e);
+        });
         fetchQuiz();
     }, []);
 

@@ -1,12 +1,10 @@
 import { useEffect, useState } from "react";
-import Cookies from "universal-cookie";
 import ProfileQuiz from "../components/profileQuiz";
 import ProfileAttempt from '../components/profileAttempt';
-
+import verifyToken from "../Utils/verificationUtils";
 import { Box, Typography, List, ListItemButton, ListItemIcon, ListItemText, Divider, Grid, Button } from '@mui/material';
 import { Dialog, DialogActions, DialogTitle, DialogContent } from "@mui/material";
 import { makeStyles, createStyles } from "@mui/styles";
-
 import SettingsIcon from '@mui/icons-material/Settings';
 import QuizIcon from '@mui/icons-material/Quiz';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
@@ -99,34 +97,6 @@ const Profile = (props) => {
     }
 
     useEffect(()=>{
-        const verifyToken = async ()=>{
-            const cookie = new Cookies();
-            const token = cookie.get("jwt");
-            if(token){
-                const postBody = {
-                    token
-                }
-                const res = await fetch(`${process.env.REACT_APP_API_URL}auth/verifyJWT`, {
-                    method:"POST",
-                    mode:"cors",
-                    headers: {
-                        'Content-Type': "application/json"
-                    },
-                    body: JSON.stringify(postBody)
-                });
-                const data = await res.json();
-                if(data.status){
-                    setAuthorized(true);
-                    parseUser(data.Token);
-                } else {
-                    setAuthorized(false);
-                    setOpen(true);
-                }
-            } else {
-                setAuthorized(false);
-                setOpen(true);
-            }
-        }
         const fetchQuizzes = async () => {
             try {
                 const res = await fetch(`${process.env.REACT_APP_API_URL}quiz/user`, {
@@ -177,7 +147,15 @@ const Profile = (props) => {
         }
 
         const main = async () => {
-            await verifyToken();
+            verifyToken().then(({status, Token}) => {
+                if(status){
+                    setAuthorized(true);
+                    parseUser(Token);
+                } else {
+                    setAuthorized(false);
+                    setOpen(true);
+                }
+            });
         }
 
         main();

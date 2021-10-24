@@ -1,8 +1,7 @@
 import React, { useState, useEffect  } from "react";
-import Cookies from "universal-cookie";
 import { createStyles, makeStyles } from "@mui/styles";
 import { Typography, Box, Button } from "@mui/material";
-
+import verifyToken from "../Utils/verificationUtils";
 const Styles = (theme) => createStyles({
     landing: {
         display:"flex",
@@ -50,40 +49,19 @@ const Styles = (theme) => createStyles({
 
 const useStyles = makeStyles(Styles);
 
-
 const Home = (props) => {
     const classes = useStyles();
 
     const [authorized, setAuthorized] = useState(false);
 
     useEffect(() => {
-        const verifyToken = async ()=>{
-            const cookie = new Cookies();
-            const token = cookie.get("jwt");
-            if(token){
-                const postBody = {
-                    token
-                }
-                const res = await fetch(`${process.env.REACT_APP_API_URL}auth/verifyJWT`, {
-                    method:"POST",
-                    mode:"cors",
-                    headers: {
-                        'Content-Type': "application/json"
-                    },
-                    body: JSON.stringify(postBody)
-                });
-                const data = await res.json();
-                if(data.status){
-                    setAuthorized(true);
-                } else {
-                    setAuthorized(false);
-                }
+        verifyToken().then(({status,Token}) => {
+            if(status) {
+                setAuthorized(true);
             } else {
                 setAuthorized(false);
             }
-        }
-
-        verifyToken();
+        }).catch(e=>{console.log(e)});
     }, []);
     
     return ( 

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import Cookies from "universal-cookie";
+import verifyToken from "../Utils/verificationUtils";
 import { Box, Typography, Button, InputLabel, Select, MenuItem, TextField, Stepper, Step, StepLabel, FormGroup, FormControl } from "@mui/material";
 import { Dialog, DialogActions, DialogTitle, DialogContent } from "@mui/material";
 import { makeStyles, createStyles } from "@mui/styles";
@@ -101,7 +101,7 @@ const CreateQuiz = (props) => {
     }
 
     // Conditionals
-    const [authorized, setAuthorized] = useState('');
+    const [authorized, setAuthorized] = useState(false);
 
     // Quiz Details
     const [quiz_name, setQuizName] = useState("");
@@ -170,29 +170,16 @@ const CreateQuiz = (props) => {
     }
 
     useEffect( () => {
-        const verifyToken = async ()=>{
-            const cookie = new Cookies();
-            const token = cookie.get("jwt");
-            const postBody = {
-                token
-            }
-            const res = await fetch(`${process.env.REACT_APP_API_URL}auth/verifyJWT`, {
-                method:"POST",
-                mode:"cors",
-                headers: {
-                    'Content-Type': "application/json"
-                },
-                body: JSON.stringify(postBody)
-            });
-            const data = await res.json();
-            if(data.status){
+        verifyToken().then(({status, Token}) => {
+            if(status) {
                 setAuthorized(true);
             } else {
                 setAuthorized(false);
                 setOpen(true);
             }
-        }
-        verifyToken();
+        }).catch((e)=>{
+            console.log(e);
+        });
     },[ authorized ]);
 
     return (

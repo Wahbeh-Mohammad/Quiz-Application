@@ -1,9 +1,8 @@
 import React, { useState, useEffect  } from "react";
-import Cookies from "universal-cookie";
+import verifyToken from "../Utils/verificationUtils";
 import HomeQuiz from "../components/homeQuiz";
 import { createStyles, makeStyles } from "@mui/styles";
 import { Typography, Box, Button, TextField, Divider, Select, MenuItem, InputLabel, FormGroup, Grid } from "@mui/material";
-
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 
 const Styles = (theme) => createStyles({
@@ -67,9 +66,9 @@ const useStyles = makeStyles(Styles);
 const Quizzes = (props) => {
     const classes = useStyles();
 
+    const [authorized, setAuthorized] = useState(false);
     const [username, setUsername] = useState("");
     const [rank, setRank] = useState("");
-    const [authorized, setAuthorized] = useState(false);
     const [quizzes, setQuizzes] = useState([]);
 
     // Filter States
@@ -86,29 +85,6 @@ const Quizzes = (props) => {
     }
 
     useEffect(() => {
-        const verifyToken = async ()=>{
-            const cookie = new Cookies();
-            const token = cookie.get("jwt");
-            const postBody = {
-                token
-            }
-            const res = await fetch(`${process.env.REACT_APP_API_URL}auth/verifyJWT`, {
-                method:"POST",
-                mode:"cors",
-                headers: {
-                    'Content-Type': "application/json"
-                },
-                body: JSON.stringify(postBody)
-            });
-            const data = await res.json();
-            if(data.status){
-                setAuthorized(true);
-                parseUser(data.Token);
-            } else {
-                setAuthorized(false);
-            }
-        }
-
         const fetchQuizzes = async () => {
             try {
                 const res = await fetch(`${process.env.REACT_APP_API_URL}quiz/`, {
@@ -129,7 +105,16 @@ const Quizzes = (props) => {
             }
         }
 
-        verifyToken();
+        verifyToken().then(({status, Token}) => {
+            if(status) {
+                setAuthorized(true);
+                parseUser(Token);
+            } else {
+                setAuthorized(false);
+            }
+        }).catch((e) => {
+            console.log(e);
+        });
         fetchQuizzes();
     }, [authorized]);
     

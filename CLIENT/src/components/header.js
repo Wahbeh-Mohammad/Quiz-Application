@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { createStyles, makeStyles } from "@mui/styles";
 import Cookies from "universal-cookie";
+import verifyToken from '../Utils/verificationUtils';
 // Components
 import { Link } from "react-router-dom";
 import { Box, Button, Avatar, Typography } from '@mui/material';
@@ -81,31 +82,18 @@ const Header = (props) => {
     }
 
     useEffect(() => {
-        const verifyToken = async ()=>{ // Verify authenticated status
-            const token = cookie.get("jwt");
-            if(token){
-                const res = await fetch(`${process.env.REACT_APP_API_URL}auth/verifyJWT`, {
-                    method:"POST",
-                    mode:"cors",
-                    headers: {
-                        'Content-Type': "application/json"
-                    },
-                    body: JSON.stringify({ token })
-                });
-
-                const data = await res.json();
-                if(data.status){
-                    setAuthorized(true);
-                    setUsername(data.Token.username);
-                } else {
-                    setAuthorized(false);
-                    cookie.set("jwt", "", {maxAge:1, path:"/"});
-                }
+        verifyToken().then(({ status, Token }) => {
+            if(status){
+                setUsername(Token.username); 
+                setAuthorized(true);
             } else {
                 setAuthorized(false);
+                setUsername("");
             }
-        }
-        verifyToken();
+        }).catch((e)=>{
+            console.log(e); 
+            setAuthorized(false)
+        });
     },[]);
 
     return (

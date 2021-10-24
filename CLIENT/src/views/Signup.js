@@ -1,5 +1,5 @@
-import React from 'react';
-import { useState } from 'react';
+import React,{ useState, useEffect } from 'react';
+import verifyToken from "../Utils/verificationUtils";
 import Cookies from 'universal-cookie';
 import utils from "../Utils/authUtils";
 import { Typography, Box, TextField, Button } from '@mui/material';
@@ -105,6 +105,7 @@ const useStyles = makeStyles(Styles);
 const Signup = (props) => {
     const classes = useStyles();
 
+    const [authorized, setAuthorized] = useState(false);
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [generalError, setGeneralError] = useState("");
@@ -162,6 +163,16 @@ const Signup = (props) => {
             console.log(err);
         }
     }
+
+    useEffect(()=>{
+        verifyToken().then(({status})=> {
+            if(status) setAuthorized(true);
+            else setAuthorized(false);            
+        }).catch(e => {
+            console.log(e);
+            setAuthorized(false);
+        })
+    },[])
 
     return ( 
         <Box className={ classes.main }>

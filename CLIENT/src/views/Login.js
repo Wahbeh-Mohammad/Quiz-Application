@@ -1,6 +1,6 @@
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Cookies from "universal-cookie";
-
+import verifyToken from "../Utils/verificationUtils";
 import { Box, Typography, TextField, Button } from '@mui/material';
 import { makeStyles, createStyles } from "@mui/styles";
 
@@ -97,7 +97,8 @@ const useStyles = makeStyles(Styles);
 
 const Login = (props) => {
     const classes = useStyles();
-
+    const cookie = new Cookies();
+    const [authorized, setAuthorized] = useState(false);
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [errorText, setErrorText] = useState("");
@@ -118,7 +119,6 @@ const Login = (props) => {
             const data = await res.json();
             if(data.status) {
                 // If Credentials are correct create a cookie that lasts a day.
-                const cookie = new Cookies();
                 const maxAge = 1*24*60*60;
                 cookie.set('jwt', data.Token, { maxAge: maxAge, path:"/" });
                 window.location.assign("/");
@@ -130,6 +130,16 @@ const Login = (props) => {
             setErrorText("Something went wrong, Please try again later.")
         }
     }
+
+    useEffect(()=>{
+        verifyToken().then(({status})=> {
+            if(status) setAuthorized(true);
+            else setAuthorized(false);            
+        }).catch(e => {
+            console.log(e);
+            setAuthorized(false);
+        })
+    },[]);
 
     return ( 
         <Box className={ classes.main }>
