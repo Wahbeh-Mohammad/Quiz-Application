@@ -2,50 +2,8 @@ import React, { useState, useEffect  } from "react";
 import { createStyles, makeStyles } from "@mui/styles";
 import { Typography, Box, Button } from "@mui/material";
 import verifyToken from "../Utils/verificationUtils";
-const Styles = (theme) => createStyles({
-    landing: {
-        display:"flex",
-        flexDirection:"row",
-        justifyContent:"center",
-        alignItems:"center",
-        padding:"1.2rem 2rem"
-    },
-    landingText: {
-        maxWidth:"40%",
-        maxHeight:"60%",
-        height:"100%",
-        display:"flex",
-        flexDirection:"column",
-        justifyContent:"space-evenly",
-        [theme.breakpoints.down(700)]: {
-            maxWidth:"90%",
-            maxHeight:"100%"
-        }
-    },
-    img: {
-        maxHeight:"75%",
-        maxWidth:"100%",
-        [theme.breakpoints.down(700)]: {
-            display:"none"
-        }
-    },
-    margin: {
-        margin:"0.5rem 0rem"
-    },
-    center: {
-        display:"flex",
-        justifyContent:"center",
-        alignItems:"center"
-    },
-    actions:{
-        display:'flex',
-        flexDirection:"row",
-        justifyContent:"flex-start",
-        alignItems:"center",
-        width:"100%",
-        gap:"1rem"
-    }
-});
+
+import Styles from "../styles/Home";
 
 const useStyles = makeStyles(Styles);
 

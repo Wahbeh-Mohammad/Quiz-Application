@@ -72,10 +72,25 @@ const deleteQuiz = async (req,res) => {
     }
 }
 
+const get_QuizName = async (req,res) => {
+    try {
+        const { quiz_id } = req.params;
+        const { user_id } = req.decodedToken;
+        const quizName = await Quiz.findOne({ where: {user_id, quiz_id}, attributes:["quiz_name"] });
+       
+        if(quizName){
+            return res.status(200).json({status:true, quiz_name: quizName.quiz_name});
+        }
+    } catch(e) {
+        return res.status(400).json({status:false, Error:e});
+    }
+}
+
 module.exports = {
     postNewQuiz,
     getQuiz,
     getQuizzes,
     getQuizzesUser,
-    deleteQuiz
+    deleteQuiz,
+    get_QuizName
 }

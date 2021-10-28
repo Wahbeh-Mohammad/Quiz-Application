@@ -8,5 +8,6 @@ Router.get("/", Controller.getQuizzes);
 Router.get("/user", requireAuth, Controller.getQuizzesUser);
 Router.get("/attempt/:quiz_id",  Controller.getQuiz);
 Router.delete("/:quiz_id", requireAuth, Controller.deleteQuiz);
+Router.get("/:quiz_id", requireAuth, Controller.get_QuizName); // Quiz name { Try fix eager loading }
 
 module.exports = Router;

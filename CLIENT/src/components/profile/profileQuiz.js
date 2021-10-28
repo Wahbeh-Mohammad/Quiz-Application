@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
@@ -6,10 +6,12 @@ import Typography from '@mui/material/Typography';
 import { Button, CardActionArea, CardActions } from '@mui/material';
 
 const ProfileQuiz = (props) => {
+
     const { quiz_id, quiz_name, category, marks, difficulty, num_questions } = props.Quiz;
+    const [quizName, setQuizName] = useState();
 
     const handleDeleteQuiz = async () => {
-        const res = await fetch(`http://localhost:3000/quiz/${quiz_id}`, {
+        const res = await fetch(`${process.env.REACT_APP_API_URL}quiz/${quiz_id}`, {
             method:"DELETE",
             mode:"cors",
             credentials:"include",
@@ -24,6 +26,31 @@ const ProfileQuiz = (props) => {
             console.log("Something Went Wrong!");
         }
     }
+
+    useEffect(()=> {
+        const getQuizName = async () => {
+            try {
+                const res = await fetch(`${process.env.REACT_APP_API_URL}quiz/${quiz_id}`, {
+                    method:"GET",
+                    mode:"cors",
+                    credentials:"include",
+                    headers: {
+                        'Access-Control-Allow-Origin':"http://localhost:3001"
+                    }
+                });
+                const data = await res.json();
+                if(data.status) {
+                    setQuizName(data.quiz_name);
+                } else {
+                    console.log("Something Went Wrong!");
+                }
+            } catch (e) {
+                console.log(e);
+            }
+        }
+
+        getQuizName();
+    }, []);
 
     return (
         <Card raised>

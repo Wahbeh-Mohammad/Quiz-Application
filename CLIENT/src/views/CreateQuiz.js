@@ -1,62 +1,12 @@
 import { useEffect, useState } from "react";
 import verifyToken from "../Utils/verificationUtils";
-import { Box, Typography, Button, InputLabel, Select, MenuItem, TextField, Stepper, Step, StepLabel, FormGroup, FormControl } from "@mui/material";
+import { Box, Typography, Button, InputLabel, Select, MenuItem, TextField, Stepper, Step, StepLabel, FormGroup, FormControl, Snackbar, Alert } from "@mui/material";
 import { Dialog, DialogActions, DialogTitle, DialogContent } from "@mui/material";
 import { makeStyles, createStyles } from "@mui/styles";
-import QuizQuestion from "../components/quizQuestion";
+import QuizQuestion from "../components/quiz/quizQuestion";
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-
-const Styles = (theme) => createStyles({
-    main: {
-        padding:"1rem",
-        height:"100%",
-        display:"grid",
-        gridTemplateRows:"10% 85% 5%"
-    },
-    stepper: {
-        margin:"0rem 3rem"
-        
-    },
-    stepperControls: {
-        margin:"0rem 5rem",
-        display:"flex",
-        flexDirection:"row",
-        justifyContent:"space-between",
-        alignItems:"center"
-    },
-    scrollable:{
-        overflowY:"scroll"
-    },
-    quizBlock: {
-        display:"flex",
-        flexDirection:"column",
-        justifyContent:"center",
-        margin:"0rem 25rem",
-        gap:"25px",
-        [theme.breakpoints.down(1200)]: {
-            margin:"0rem 20rem"
-        },
-        [theme.breakpoints.down(950)]: {
-            margin:"0rem 10rem"
-        },
-        [theme.breakpoints.down(600)]: {
-            margin:"0rem 5rem"
-        }
-    }, 
-    questionsBlock: {
-        display:"grid",
-        gridTemplateColumns:"49.5% 49.5%",
-        gridGap:"1%"
-    },
-    submitBlock:{
-        display:"flex",
-        flexDirection:"column",
-        justifyContent:"center",
-        alignItems:"center",
-        gap:"0.5rem"
-    }
-});
+import Styles from '../styles/CreateQuiz';
 
 const useStyles = makeStyles(Styles);
 
@@ -66,6 +16,7 @@ const CreateQuiz = (props) => {
     const handleRedirect = (to) => {
         window.location.assign(to);
     }
+
     // Dialog related
     const [open, setOpen] = useState(false);
     const handleDialogClose = () => setOpen(false);
@@ -104,12 +55,18 @@ const CreateQuiz = (props) => {
     const [authorized, setAuthorized] = useState(false);
 
     // Quiz Details
+    const [quiz_id, setQuizId] = useState(undefined);
     const [quiz_name, setQuizName] = useState("");
     const [category, setCategory] = useState("MISC");
     const [difficulty, setDifficulty] = useState(0);
     const [num_questions, setNumberOfQuestions] = useState(0);
     const [questions, setQuestions] = useState([]);
-    const [quiz_id, setQuizId] = useState(undefined);
+    const [errorMessage, setErrorMessage] = useState("");
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+
+    const checkValues = ()=>{
+        if(!quiz_name || !difficulty || questions.length != num_questions)return true;
+    }
 
     const handleQuestionAdd = (question) => {
         const toSave = { prompt: question.prompt, 
@@ -138,6 +95,12 @@ const CreateQuiz = (props) => {
     }
 
     const handleSubmit = async (e) => {
+        setSnackbarOpen(false);
+        if(checkValues()){
+            setErrorMessage("You left a field empty.");
+            setSnackbarOpen(true);
+            return;
+        }
         e.preventDefault();
         try {
             const postBody = { quiz_name, category, marks:num_questions, difficulty, num_questions };
@@ -186,6 +149,11 @@ const CreateQuiz = (props) => {
         <Box>
             { authorized && 
                 <Box className={classes.main}> 
+                    <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={()=>{setSnackbarOpen(false)}}>
+                        <Alert severity="error" sx={{width:"100%"}}>
+                            { errorMessage }
+                        </Alert>
+                    </Snackbar>
                     <Stepper activeStep={activeStep} className={ classes.stepper }>
                         {steps.map((label) => {
                             return (

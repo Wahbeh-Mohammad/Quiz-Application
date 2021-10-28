@@ -1,4 +1,4 @@
-import { Header, Footer } from './components/index'; // Partials
+import { Header, Footer } from './components/partials/index'; // Partials
 import { Home, Login, Signup, CreateQuiz, Profile, Quiz, Quizzes, NotFound } from './views/index'; // Views
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { Box } from '@mui/material';

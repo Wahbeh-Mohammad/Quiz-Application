@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { createStyles, makeStyles } from "@mui/styles";
 import Cookies from "universal-cookie";
-import verifyToken from '../Utils/verificationUtils';
+import verifyToken from '../../Utils/verificationUtils';
 // Components
 import { Link } from "react-router-dom";
 import { Box, Button, Avatar, Typography } from '@mui/material';

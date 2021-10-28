@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import ProfileQuiz from "../components/profileQuiz";
-import ProfileAttempt from '../components/profileAttempt';
+import ProfileQuiz from "../components/profile/profileQuiz";
+import ProfileAttempt from '../components/profile/profileAttempt';
 import verifyToken from "../Utils/verificationUtils";
 import { Box, Typography, List, ListItemButton, ListItemIcon, ListItemText, Divider, Grid, Button } from '@mui/material';
 import { Dialog, DialogActions, DialogTitle, DialogContent } from "@mui/material";

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router";
 import verifyToken from "../Utils/verificationUtils";
-import AttemptQuestion from "../components/attemptQuestion";
-import ReviewQuestion from "../components/reviewQuestion";
+import AttemptQuestion from "../components/attempt/attemptQuestion";
+import ReviewQuestion from "../components/attempt/reviewQuestion";
 import { Box, Typography, Grid, Button, Divider } from '@mui/material';
 import { makeStyles, createStyles } from '@mui/styles';
 import { Link } from 'react-router-dom';
@@ -122,8 +122,6 @@ const Quiz = (props) => {
     }
 
     const handleSubmit = () => {
-        console.log(userAnswers);
-        console.log(correctAnswers);
         const keys = Object.keys(correctAnswers);
         var Score = 0;
         keys.forEach( key => {
