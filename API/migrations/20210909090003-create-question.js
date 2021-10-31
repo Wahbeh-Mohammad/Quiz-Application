@@ -29,7 +29,7 @@ module.exports = {
         type: DataTypes.STRING,
       },
       correct_answer: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         allowNull:false
       },
       createdAt: {

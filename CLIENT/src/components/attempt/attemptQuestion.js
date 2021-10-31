@@ -54,8 +54,8 @@ const AttemptQuestion = (props) => {
                 <RadioGroup value={chosen} id={`answer`} onChange={e => {handleChange(e.target.value);}}>
                     <FormControlLabel value={answer1} control={<Radio />} label={answer1} />
                     <FormControlLabel value={answer2} control={<Radio />} label={answer2} />
-                    <FormControlLabel value={answer3} control={<Radio />} label={answer3} />
-                    <FormControlLabel value={answer4} control={<Radio />} label={answer4} />
+                    {answer3 && <FormControlLabel value={answer3} control={<Radio />} label={answer3} />}
+                    {answer4 && <FormControlLabel value={answer4} control={<Radio />} label={answer4} />}
                     {/* <FormControlLabel value={null} control={<Radio hidden />} /> */}
                 </RadioGroup>
             </Box>

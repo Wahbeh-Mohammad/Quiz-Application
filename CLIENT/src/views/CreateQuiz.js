@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import verifyToken from "../Utils/verificationUtils";
-import { Box, Typography, Button, InputLabel, Select, MenuItem, TextField, Stepper, Step, StepLabel, FormGroup, FormControl, Snackbar, Alert } from "@mui/material";
-import { Dialog, DialogActions, DialogTitle, DialogContent } from "@mui/material";
-import { makeStyles, createStyles } from "@mui/styles";
+import { Box, Typography, Button, FormControlLabel , TextField, Stepper, Step, StepLabel, FormGroup, FormControl, Snackbar, Alert } from "@mui/material";
+import { Dialog, DialogActions, DialogTitle, DialogContent, Radio, RadioGroup, FormLabel } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import QuizQuestion from "../components/quiz/quizQuestion";
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
@@ -81,7 +81,6 @@ const CreateQuiz = (props) => {
     const postQuestion = async (quiz_id, question) => {
             const postBody = question;
             console.log("QUESTION: ",postBody);
-            console.log(quiz_id);
             const res = await fetch(`${process.env.REACT_APP_API_URL}question/${quiz_id}`, {
                 method:"POST",
                 mode:"cors",
@@ -121,8 +120,8 @@ const CreateQuiz = (props) => {
                 const { quiz_id } = data;
                 setQuizId(quiz_id);
                 questions.forEach((question) => postQuestion(quiz_id, question));
-                window.location.assign(`/quiz/${quiz_id}`);
-            }
+                // window.location.assign(`/quiz/${quiz_id}`);
+            } 
         } catch (er) {
             console.log(er);
         }
@@ -168,18 +167,13 @@ const CreateQuiz = (props) => {
                             <FormGroup>
                             <TextField value={quiz_name} onChange={ e=>setQuizName(e.target.value) } placeholder="Quiz name" />
                             </FormGroup>
-                            <FormControl>
-                                <InputLabel id="Category">Category</InputLabel>
-                                <Select fullWidth variant="standard" id="categorySelect"
-                                    labelId="Category"
-                                    label="Category"
-                                    onChange={e => setCategory(e.target.value)}>
-                                        <MenuItem value={"MISC"}>MISC</MenuItem>
-                                        <MenuItem value={"GEOGRAPHY"}>GEOGRAPHY</MenuItem>
-                                        <MenuItem value={"MATH"}>MATH</MenuItem>
-                                        <MenuItem value={"PHYSICS"}>PHHYSICS</MenuItem>
-                                </Select>
-                            </FormControl>
+                            <FormLabel component="legend"> Category </FormLabel>
+                            <RadioGroup aria-label="Category" defaultValue="MISC" onChange={(e)=>{setCategory(e.target.value)}}> 
+                                <FormControlLabel value="MISC" control={<Radio />} label="MISC" />
+                                <FormControlLabel value="GEOGRAPHY" control={<Radio />} label="GEOGRAPHY" />
+                                <FormControlLabel value="MATH" control={<Radio />} label="MATH" />
+                                <FormControlLabel value="PHYSICS" control={<Radio />} label="PHYSICS" />
+                            </RadioGroup>
                             <FormGroup> 
                                 <TextField value={num_questions ? num_questions:""} onChange={ e=> setNumberOfQuestions(e.target.value) } placeholder="Number of Questions" />
                             </FormGroup>

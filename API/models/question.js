@@ -41,7 +41,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
     },
     correct_answer: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
       allowNull:false
     }
   }, {

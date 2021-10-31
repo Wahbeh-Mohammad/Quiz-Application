@@ -20,7 +20,7 @@ const handleErrors = (e) => {
     return errs;
 }
 
-const postRegisterUser = async (req,res) => {
+const post_RegisterUser = async (req,res) => {
     try {
         const { username, password } = req.body;
         const check = await User.findOne({ where: {username} });
@@ -41,7 +41,7 @@ const postRegisterUser = async (req,res) => {
     }
 }
 
-const postLoginUser = async (req,res) => {
+const post_LoginUser = async (req,res) => {
     try {
         const { username, password } = req.body;
         const user = await User.findOne({ where: {username} });
@@ -62,17 +62,50 @@ const postLoginUser = async (req,res) => {
     }
 }
 
-const getLogoutUser = (req,res) => {
+const put_UpdateAccount = async(req,res) => {
     try {
-        res.status(200).send();
-    } catch ( e ) {
+        const { user_id } = req.decodedToken;
+        console.log(req.body);
+        const { oldPassword, newPassword } = req.body;
+        const user = await User.findOne({ where :{ user_id } });
+        if(user) {
+            if( comparePasswords(oldPassword, user.password) ) {
+                const salt = await bcrypt.genSalt();
+                const HashedPw = await bcrypt.hash(newPassword, salt);
+                user.password = HashedPw;
+                await user.save();
+                return res.status(200).json({status:true, msg:"password updated."})
+            } else {
+                throw Error("Wrong Password");
+            }
+        } else {
+            throw Error("Unknown account.");
+        }
+    } catch (e) {
         console.log(e);
-        return res.status(400).send({ Errors:e });
+        return res.status(400).json({status:false, Error:e});
     }
 }
 
+const delete_DeleteAccount = async(req,res) => {
+    try {
+        const { user_id } = req.decodedToken;
+        const user = await User.destroy({ where:{user_id}});
+        if(user){
+            return res.status(200).json({status:true, msg:"account deleted."});
+        } else {
+            return res.status(400).json({status:true, msg:"account not deleted."});
+        }
+    } catch (e) {
+        console.log(e);
+        return res.status(400).json({status:false, Error:e});        
+    }
+}
+
+
 module.exports = {
-    postRegisterUser,
-    postLoginUser,
-    getLogoutUser
+    post_RegisterUser,
+    post_LoginUser,
+    put_UpdateAccount,
+    delete_DeleteAccount
 }

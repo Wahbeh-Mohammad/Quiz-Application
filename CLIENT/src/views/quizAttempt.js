@@ -189,7 +189,7 @@ const Quiz = (props) => {
                     setQuizFound(false);
                 }
             } catch (err) {
-                console.log(err);
+                setQuizFound(false);
             }
         }
 
