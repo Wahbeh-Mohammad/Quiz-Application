@@ -1,2 +1,2 @@
 # Quiz-Application
-Quiz application using PERN stack. 
+Quiz application using PostgreSQL, Express, ReactJS, Node.
